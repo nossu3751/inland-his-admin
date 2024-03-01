@@ -14,7 +14,7 @@ flask_env = os.getenv("INLAND_HIS_ENV")
 if flask_env == "development":
     url = 'http://localhost:5001'
 else:
-    url = 'http//localhost:5001'
+    url = '/proxy/'
 
 def initialize_page(required_roles:Iterable=[]):
     set_page_config()
