@@ -20,12 +20,12 @@ def initialize_page(required_roles:Iterable=[]):
     set_page_config()
     hide_streamlit_style()
     topbar()
-    # authenticate_result = authenticate()
-    # if authenticate_result != None:
-    #     role, authenticator, config = authenticate_result
-    #     authorize(required_roles, role)
-    #     return authenticator, config
-    # return None,None
+    authenticate_result = authenticate()
+    if authenticate_result != None:
+        role, authenticator, config = authenticate_result
+        authorize(required_roles, role)
+        return authenticator, config
+    return None,None
     
 
 def set_page_config():
