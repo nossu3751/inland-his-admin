@@ -198,6 +198,7 @@ def authenticate():
     authenticator.login()
 
     if st.session_state["authentication_status"]:
+        st.write("logged in")
         with st.sidebar:
             authenticator.logout()
             try:
