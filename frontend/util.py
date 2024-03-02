@@ -184,9 +184,12 @@ def authorize(required_roles:list, current_role:str):
 
 
 def authenticate():
+    st.write("loading config")
     with open('./frontend/config.yaml') as file:
         config = yaml.load(file, Loader=SafeLoader)
-
+    
+    st.write("config loaded")
+    st.write("creating authenticator")
     authenticator = stauth.Authenticate(
         config['credentials'],
         config['cookie']['name'],
@@ -194,9 +197,11 @@ def authenticate():
         config['cookie']['expiry_days'],
         config['preauthorized']
     )
-
+    st.write("authenticator created")
+    st.write("trying login")
     authenticator.login()
-
+    st.write("login successful")
+    st.write(st.session_state)
     if st.session_state["authentication_status"]:
         st.write("logged in")
         with st.sidebar:
