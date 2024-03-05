@@ -80,14 +80,18 @@ def hide_streamlit_style():
         }
         [data-testid="stSidebarNav"]::before {
                 content: "히즈관리앱";
-                margin-left: 20px;
                 margin-bottom: 50px;
                 font-size: 30px;
-                position: relative;
-                top: 30px;
+                position: absolute;
+                padding-top: 30px;
+                padding-left: 20px;
+                top: 0;
+                left: 0;
                 font-weight: bolder;
                 color: #3e3053;
                 background-color: #F4F3F7;
+                width: 100%;
+
             }
         button[data-testid="baseButton-header"] {
         z-index:1000000 !important;
