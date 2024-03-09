@@ -4,6 +4,7 @@ from flask_cors import CORS
 from config import Config
 from app.api.v1.routers.bulletin import bulletins_blueprint
 from app.api.v1.routers.small_group_discussion import small_group_discussions_blueprint
+from app.api.v1.routers.app_patch import app_patch_blueprint
 from .extensions import db, s3_wrapper
 from dotenv import load_dotenv
 
@@ -30,6 +31,7 @@ def create_app():
 
     app.register_blueprint(bulletins_blueprint)
     app.register_blueprint(small_group_discussions_blueprint)
+    app.register_blueprint(app_patch_blueprint)
     # app.register_blueprint(events_blueprint)
     # app.register_blueprint(bible_challenges_blueprint)
 

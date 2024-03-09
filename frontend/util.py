@@ -12,7 +12,7 @@ from yaml.loader import SafeLoader
 flask_env = os.getenv("INLAND_HIS_ENV")
 
 if flask_env == "development":
-    url = 'http://localhost:5001'
+    url = 'http://localhost:5002'
 else:
     url = 'https://admin.inlandhis.com/proxy/'
 

@@ -6,7 +6,7 @@ if flask_env == "development":
     from dotenv import load_dotenv
     load_dotenv()
     url = '0.0.0.0'
-    port = 5001
+    port = 5002
 else:
     url = '0.0.0.0'
     port = 5001
