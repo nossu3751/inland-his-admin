@@ -107,9 +107,10 @@ def update_spreadsheet_info(sheetlink, sheetname):
     st.rerun()
 
 def approve_new_comer(new_comer_data):
-    res = requests.post(f"{url}/api/v1/new-comers/googleSheet", json=new_comer_data)
-    if res.status_code != 201:
-        st.stop()
+    with st.spinner():
+        res = requests.post(f"{url}/api/v1/new-comers/googleSheet", json=new_comer_data)
+        if res.status_code != 201:
+            st.stop()
 
     
 
@@ -119,13 +120,13 @@ def approve_new_comer(new_comer_data):
     
     
 # st.write(st.session_state)
-st.title("새신자관리")
+st.title("새가족 관리")
 
 add_vertical_space()
 
 if st.session_state["new_comer_mode"] == "list":
     clear_form_data()
-
+    
     spreadsheet_info_submitted = False
     with st.form("sheet_info"):
         spreadsheet_link = st.text_input("구글시트 링크", config_data["new-comer-sheet"]["link"])
@@ -139,7 +140,7 @@ if st.session_state["new_comer_mode"] == "list":
         new_comers = requests.get(f"{url}/api/v1/new-comers")
 
     if new_comers.status_code != 200:
-        st.error("새신자 목록을 불러 올 수 없습니다.")
+        st.error("새가족 목록을 불러 올 수 없습니다.")
         st.stop()
 
     add_vertical_space()
@@ -172,58 +173,55 @@ if st.session_state["new_comer_mode"] == "list":
         </style>''', unsafe_allow_html=True)
     
     new_comers_json = new_comers.json()
-    register_date_new_comer_map = {}
-    for new_comer_data in new_comers_json:
-        register_date = new_comer_data["registered_at"]
-        if register_date not in register_date_new_comer_map:
-            register_date_new_comer_map[register_date] = []
-        register_date_new_comer_map[register_date].append(new_comer_data)
+    if len(new_comers_json) > 0:
+        register_date_new_comer_map = {}
+        for new_comer_data in new_comers_json:
+            register_date = new_comer_data["registered_at"]
+            if register_date not in register_date_new_comer_map:
+                register_date_new_comer_map[register_date] = []
+            register_date_new_comer_map[register_date].append(new_comer_data)
 
-    sorted_register_dates = sorted(register_date_new_comer_map.keys(), key=lambda date: datetime.strptime(date, "%Y-%m-%d"))
+        sorted_register_dates = sorted(register_date_new_comer_map.keys(), key=lambda date: datetime.strptime(date, "%Y-%m-%d"))
 
-    user_index = 0
+        user_index = 0
 
-    for dt in sorted_register_dates:
-        st.info(f"{dt} 등록자")
-        for new_comer in register_date_new_comer_map[dt]:
-            col1,col2 = st.columns(2)
-            with col1:
-                st.write(f'{new_comer["name"]} ({int((date.today() - date.fromisoformat(new_comer["birthday"])).days / 365.25)} 세)')
-            # with col2:
-            #     splited_date = str(new_comer["registered_at"]).split("-")
-            #     st.write("-".join([splited_date[1], splited_date[2], splited_date[0][2:]]))
-            
-            with col2:
-                col3,col4 = st.columns(2)
-                with col3:
-                    st.button(":question:", key=f"new_comer_view_key_{user_index}", on_click=view_new_comer, args=[new_comer["id"]])
-                with col4:
-                    st.button(":heavy_check_mark:", 
-                              key=f"new_comer_approve_key_{user_index}", 
-                              on_click=approve_new_comer, 
-                              args=[{
-                                "new_comer_id":new_comer["id"],
-                                "spreadsheet_link": config_data["new-comer-sheet"]["link"],
-                                "sheet":config_data["new-comer-sheet"]["sheet"]
-                            }])
-            user_index += 1
-    # for i in range(len(new_comers_json)):
-    #     new_comer = new_comers_json[i]
-    #     if i != 0:
-    #         add_vertical_space()
-    #     col1,col2 = st.columns(2)
-    #     with col1:
-    #         st.write(f'{new_comer["name"]} ({int((date.today() - date.fromisoformat(new_comer["birthday"])).days / 365.25)} 세)')
-    #     # with col2:
-    #     #     splited_date = str(new_comer["registered_at"]).split("-")
-    #     #     st.write("-".join([splited_date[1], splited_date[2], splited_date[0][2:]]))
-         
-    #     with col2:
-    #         st.button("보기", key=f"new_comer_view_key_{i}", on_click=view_new_comer, args=[new_comer["id"]])
-        
-       
-    #     # st.markdown("***", unsafe_allow_html=True)
-
+        for dt in sorted_register_dates:
+            st.info(f"{dt} 등록자")
+            for new_comer in register_date_new_comer_map[dt]:
+                col1,col2 = st.columns(2)
+                with col1:
+                    st.write(f'{new_comer["name"]} ({int((date.today() - date.fromisoformat(new_comer["birthday"])).days / 365.25)} 세)')
+                # with col2:
+                #     splited_date = str(new_comer["registered_at"]).split("-")
+                #     st.write("-".join([splited_date[1], splited_date[2], splited_date[0][2:]]))
+                
+                with col2:
+                    col3,col4 = st.columns(2)
+                    with col3:
+                        st.button(":question:", key=f"new_comer_view_key_{user_index}", on_click=view_new_comer, args=[new_comer["id"]])
+                    with col4:
+                        st.button(":heavy_check_mark:", 
+                                key=f"new_comer_approve_key_{user_index}", 
+                                on_click=approve_new_comer, 
+                                args=[{
+                                    "new_comer_id":new_comer["id"],
+                                    "spreadsheet_link": config_data["new-comer-sheet"]["link"],
+                                    "sheet":config_data["new-comer-sheet"]["sheet"]
+                                }])
+                user_index += 1
+        add_vertical_space()
+        add_vertical_space()
+        st.button(
+            "구글시트로 모두 보내기", 
+            on_click=approve_new_comer,
+            args=[{
+                "new_comer_id": "all",
+                "spreadsheet_link": config_data["new-comer-sheet"]["link"],
+                "sheet":config_data["new-comer-sheet"]["sheet"]
+            }]
+        )
+    else:
+        st.success("등록된 새가족이 없습니다.")
 elif st.session_state["new_comer_mode"] == "view":
     initialize_form_data()
     
@@ -249,7 +247,7 @@ elif st.session_state["new_comer_mode"] == "view":
         st.session_state["new_comer_modify_data_loaded"] = True
     
     st.markdown("***", unsafe_allow_html=True)
-    st.markdown("<h4>새신자 정보 수정</h4>", unsafe_allow_html=True)
+    st.markdown("<h4>새가족 정보 수정</h4>", unsafe_allow_html=True)
     add_vertical_space()
     name = st.text_input("이름", key=form_inputs["이름"])
     new_comer_birthday = st.date_input("생년월일", key=form_inputs["생년월일"], min_value=date(year=1960, month=1, day=1))
